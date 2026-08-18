@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Category {
+  id           String   @id @default(cuid())
+  name         String
+  nameEn       String?
+  nameRu       String?
+  slug         String   @unique
+  displayOrder Int      @default(0)
+  items        Item[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+}
+
+model Item {
+  id            String   @id @default(cuid())
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  title         String
+  titleEn       String?
+  titleRu       String?
+  subtitle      String?
+  subtitleEn    String?
+  subtitleRu    String?
+  description   String?
+  descriptionEn String?
+  descriptionRu String?
+  price         Decimal  @db.Decimal(10, 2)
+  priceLabel    String?
+  isSet         Boolean  @default(false)
+  imageUrl      String?
+  available     Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([categoryId, displayOrder])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,282 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* -------------------------------------------------------------------------
+   Design tokens
+   Colors are overridden per-instance in <head> from SiteSetting rows
+   (see app/layout.tsx). The values here are safe fallbacks used until
+   the DB is reachable.
+   ------------------------------------------------------------------------- */
+:root {
+  --background: #FBF7F2;
+  --foreground: #1A1512;
+  --muted: #F1E9DE;
+  --muted-foreground: #6B6156;
+  --card: #FFFFFF;
+  --card-foreground: #1A1512;
+  --border: #E7DDCF;
+  --input: #E7DDCF;
+  --ring: #D91E1E;
+
+  --primary: #D91E1E;
+  --primary-foreground: #FFFFFF;
+  --primary-hover: #B01818;
+
+  --accent: #C89632;
+  --accent-foreground: #1A1512;
+
+  --destructive: #B91C1C;
+  --destructive-foreground: #FFFFFF;
+
+  --radius: 0.875rem;
+  --radius-sm: 0.5rem;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.06);
+  --shadow-xl: 0 24px 48px -12px rgb(0 0 0 / 0.18);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --radius-DEFAULT: var(--radius);
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+/* Utility: subtle textured background evoking the logo's snowflake pattern.
+   Kept very faint so it doesn't compete with content. */
+.bg-pattern {
+  background-image:
+    radial-gradient(circle at 12% 20%, color-mix(in oklab, var(--primary) 6%, transparent) 0, transparent 40%),
+    radial-gradient(circle at 88% 82%, color-mix(in oklab, var(--accent) 6%, transparent) 0, transparent 45%);
+}
+
+/* Hide scrollbars but keep scrolling (used by the sticky category nav) */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Set-menu decorative border used by premium item cards */
+.set-card {
+  position: relative;
+  border: 1.5px solid color-mix(in oklab, var(--primary) 40%, transparent);
+  background:
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--accent) 8%, var(--card)) 0%,
+      var(--card) 60%);
+}
+.set-card::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed color-mix(in oklab, var(--accent) 55%, transparent);
+  border-radius: calc(var(--radius) - 4px);
+  pointer-events: none;
+}
+
+/* Animated shimmering conic border on set cards.
+   Uses @property to animate the conic-gradient's start angle *in place*
+   (animating transform: rotate would spin the whole rectangle out of position). */
+@property --set-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.set-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--set-angle),
+    color-mix(in oklab, var(--primary) 75%, transparent) 0deg,
+    color-mix(in oklab, var(--accent) 90%, transparent) 90deg,
+    transparent 180deg,
+    color-mix(in oklab, var(--primary) 75%, transparent) 270deg,
+    color-mix(in oklab, var(--primary) 75%, transparent) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: set-angle-spin 8s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes set-angle-spin {
+  to { --set-angle: 360deg; }
+}
+
+/* Classic "restaurant menu" dotted-leader row */
+.menu-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: 100%;
+}
+.menu-row > .leader {
+  flex: 1;
+  align-self: flex-end;
+  height: 1em;
+  border-bottom: 2px dotted color-mix(in oklab, var(--foreground) 22%, transparent);
+  transform: translateY(-0.3em);
+  min-width: 12px;
+}
+
+/* Menu-item reveal — stagger via inline animation-delay */
+.animate-reveal {
+  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ---- Landing hero animations ---- */
+
+@keyframes ken-burns {
+  0%   { transform: scale(1.08) translate3d(0, 0, 0); }
+  50%  { transform: scale(1.18) translate3d(-2%, -1.5%, 0); }
+  100% { transform: scale(1.08) translate3d(0, 0, 0); }
+}
+.animate-ken-burns { animation: ken-burns 26s ease-in-out infinite; }
+
+@keyframes float-orb {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(20px, -30px, 0) scale(1.08); }
+  66%      { transform: translate3d(-15px, 20px, 0) scale(0.94); }
+}
+.animate-float-orb { animation: float-orb 14s ease-in-out infinite; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.animate-fade-up { animation: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in { animation: fade-in 1.2s ease-out both; }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--foreground) 0%,
+    var(--foreground) 35%,
+    color-mix(in oklab, var(--accent) 90%, white) 50%,
+    var(--foreground) 65%,
+    var(--foreground) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 10px 24px -6px color-mix(in oklab, var(--primary) 45%, transparent),
+      0 0 0 0 color-mix(in oklab, var(--primary) 30%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 14px 30px -6px color-mix(in oklab, var(--primary) 55%, transparent),
+      0 0 0 12px color-mix(in oklab, var(--primary) 0%, transparent);
+  }
+}
+.animate-glow { animation: glow-pulse 3.2s ease-in-out infinite; }
+
+@keyframes scroll-cue {
+  0%   { transform: translateY(0);    opacity: 0.6; }
+  50%  { transform: translateY(8px);  opacity: 1; }
+  100% { transform: translateY(0);    opacity: 0.6; }
+}
+.animate-scroll-cue { animation: scroll-cue 2.2s ease-in-out infinite; }
+
+@keyframes ring-drift {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-ring-drift { animation: ring-drift 40s linear infinite; }
+
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+.animation-delay-700 { animation-delay: 0.7s; }
+.animation-delay-1000 { animation-delay: 1s; }
+
+/* Warm nostalgic tint applied over the hero image */
+.hero-sepia {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg,
+      color-mix(in oklab, #d18b3a 22%, transparent) 0%,
+      color-mix(in oklab, #6a2a12 18%, transparent) 100%);
+  mix-blend-mode: soft-light;
+}
+
+/* Subtle film grain on the hero for a premium print-poster feel */
+.hero-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
