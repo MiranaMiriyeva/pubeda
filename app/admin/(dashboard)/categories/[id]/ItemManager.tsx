@@ -288,20 +288,18 @@ function SortableItemRow({
       </div>
 
       <button
+        type="button"
         onClick={onToggle}
+        role="switch"
+        aria-checked={item.available}
         aria-label={item.available ? 'Mark unavailable' : 'Mark available'}
         title={item.available ? 'Available' : 'Unavailable'}
         className={cn(
-          'ml-1 w-8 h-5 rounded-full relative transition-colors',
-          item.available ? 'bg-primary' : 'bg-border',
+          'ml-1 shrink-0 inline-flex items-center w-10 h-6 rounded-full p-0.5 transition-colors',
+          item.available ? 'bg-primary justify-end' : 'bg-border justify-start',
         )}
       >
-        <span
-          className={cn(
-            'absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform',
-            item.available ? 'translate-x-3.5' : 'translate-x-0.5',
-          )}
-        />
+        <span className="w-5 h-5 rounded-full bg-white shadow-sm transition-transform" />
       </button>
 
       <button
