@@ -15,11 +15,7 @@ export default async function LandingPage() {
   const l = localizeSettings(settings, locale)
   const strings = t(locale)
 
-  // Exact restaurant coordinates so the pin actually drops on the map (the
-  // street address alone doesn't always geocode). Directions mode opens with
-  // a route ready, matching the "Yol göstər / Directions" button.
-  const mapsUrl =
-    'https://www.google.com/maps/dir/?api=1&destination=40.38337,49.82395'
+  const mapsUrl = 'https://maps.app.goo.gl/VSYUdcn3rUAWEqM76?g_st=ic'
 
   const phoneHref = `tel:${l.phone.replace(/\s+/g, '')}`
 
