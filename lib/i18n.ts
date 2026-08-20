@@ -98,6 +98,7 @@ type Dict = {
   error: string
   required: string
   heroBadge: string
+  scanForMenu: string
 }
 
 export const dict: Record<Locale, Dict> = {
@@ -161,6 +162,7 @@ export const dict: Record<Locale, Dict> = {
     error: 'Xəta baş verdi',
     required: 'Vacibdir',
     heroBadge: 'Nostalji atmosfer · Klassik dadlar',
+    scanForMenu: 'Menyunu açmaq üçün skan edin',
   },
   en: {
     viewMenu: 'View menu',
@@ -222,6 +224,7 @@ export const dict: Record<Locale, Dict> = {
     error: 'Something went wrong',
     required: 'Required',
     heroBadge: 'Nostalgic atmosphere · Classic tastes',
+    scanForMenu: 'Scan to open the menu',
   },
   ru: {
     viewMenu: 'Смотреть меню',
@@ -283,6 +286,7 @@ export const dict: Record<Locale, Dict> = {
     error: 'Что-то пошло не так',
     required: 'Обязательно',
     heroBadge: 'Ностальгическая атмосфера · Классические вкусы',
+    scanForMenu: 'Сканируйте, чтобы открыть меню',
   },
 }
 

@@ -15,9 +15,11 @@ export default async function LandingPage() {
   const l = localizeSettings(settings, locale)
   const strings = t(locale)
 
+  // Exact restaurant coordinates so the pin actually drops on the map (the
+  // street address alone doesn't always geocode). Directions mode opens with
+  // a route ready, matching the "Yol göstər / Directions" button.
   const mapsUrl =
-    'https://www.google.com/maps/search/?api=1&query=' +
-    encodeURIComponent(l.address)
+    'https://www.google.com/maps/dir/?api=1&destination=40.38337,49.82395'
 
   const phoneHref = `tel:${l.phone.replace(/\s+/g, '')}`
 
@@ -201,6 +203,21 @@ export default async function LandingPage() {
       )}
 
       <footer className="mt-auto px-6 py-8 border-t border-border bg-card/60">
+        <div className="max-w-2xl mx-auto mb-8 flex flex-col items-center text-center">
+          <div className="relative rounded-2xl bg-white p-3 shadow-lg ring-1 ring-black/5">
+            <Image
+              src="/qr-code.jpeg"
+              alt={`${l.shopName} — ${strings.scanForMenu}`}
+              width={160}
+              height={160}
+              className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
+            />
+          </div>
+          <p className="mt-3 text-xs sm:text-sm uppercase tracking-[0.18em] font-semibold text-muted-foreground">
+            {strings.scanForMenu}
+          </p>
+        </div>
+
         <div className="max-w-2xl mx-auto grid gap-5 sm:grid-cols-3">
           {l.address && (
             <div className="flex items-start gap-2 text-sm">
